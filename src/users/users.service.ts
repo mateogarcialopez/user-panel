@@ -1,9 +1,9 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { NotFoundError } from 'rxjs';
 import { UserDto, UserDtoUpdate } from './dtos/user.dto';
 import { user } from './entities/user.entity';
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UsersService {
@@ -13,6 +13,8 @@ export class UsersService {
     async createUser(userDto: UserDto) {
         try {
             const userData = new this._userModel(userDto)
+            const hashPassword = await bcrypt.hashSync(userData.password, 10)
+            userData.password = hashPassword
             const createUser = await userData.save()
 
             if (!createUser) {
@@ -88,9 +90,9 @@ export class UsersService {
         }
     }
 
-    async deleteUser(id: string){
+    async deleteUser(id: string) {
         try {
-            const userToDelete = await this._userModel.findOneAndDelete({id}).exec()
+            const userToDelete = await this._userModel.findOneAndDelete({ id }).exec()
 
             if (!userToDelete) {
                 throw new HttpException({
@@ -106,5 +108,10 @@ export class UsersService {
                 error
             }, HttpStatus.BAD_REQUEST)
         }
+    }
+
+    async findUsersByEmail(email: string) {
+        const user = await this._userModel.findOne({ email })
+        return user
     }
 }

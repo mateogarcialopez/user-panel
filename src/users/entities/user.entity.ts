@@ -11,7 +11,7 @@ export class user extends Document {
     celphone: number
     @Prop({ type: String, unique: true })
     email: string
-    @Prop({ type: String, required: true, select: false})
+    @Prop({ type: String, required: true})
     password: string
     @Prop({ type: String, required: true })
     departmen: string

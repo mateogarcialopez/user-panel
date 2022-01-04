@@ -10,6 +10,8 @@ export default registerAs('config', () => {
             mongo_port: process.env.MONGO_PORT,
             mongo_host: process.env.MONGO_HOST,
             mongo_connection: process.env.MONGO_CONNECTION
-        }
+        },
+        token: process.env.TOKEN,
+        secret: process.env.SECRET
     }
 })

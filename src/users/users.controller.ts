@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 import { UserDto, UserDtoUpdate } from './dtos/user.dto';
 import { UsersService } from './users.service';
+import { } from "bcrypt";
+import { ApiKeyGuard } from 'src/auth/guards/api-key.guard';
+import { Public } from 'src/auth/decorators/public.decoratos';
 
+
+@UseGuards(ApiKeyGuard)
 @Controller('users')
 @ApiTags('users')
 export class UsersController {
@@ -17,12 +22,14 @@ export class UsersController {
     }
 
     @Get('/:id')
+    @Public() // Is a custom decorator
     @ApiOperation({ description: 'this is a test description' })
     getUser(@Param('id', MongoIdPipe) id: string) {
         return this._userService.getUser(id)
     }
 
     @Get()
+    @Public() // Is a custom decorator
     @ApiOperation({ description: 'this is a test description' })
     getUsers() {
         return this._userService.getUsers()
@@ -39,4 +46,6 @@ export class UsersController {
     deleteUser(@Param('id', MongoIdPipe) id: string) {
         return this._userService.deleteUser(id)
     }
+
+    
 }
